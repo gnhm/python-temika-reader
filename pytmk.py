@@ -144,7 +144,7 @@ class Movie:
 
 		elif self.camera_type == 2:
 			self.camera_name = 'Andor'
-			for attr, value in self.read_header(0).items():
+			for attr, value in self.get_frame_header(0).items():
 				setattr(self, attr, value)
 
 		elif self.camera_type == 3:
@@ -186,7 +186,7 @@ class Movie:
 		else:
 			raise Exception('Invalid camera type: Must be 1 for IIDC, 2 for Andor, and 3 for Ximea')
 
-	def read_header(self, i):
+	def get_frame_header(self, i):
 		if self.camera_name == 'IIDC':
 			#Time is in microseconds!
 			struct_string = 6*"I" + "L" + 4*"I" + "L" + 10*"I" + "L" + 7*"II" + "IiI" 
@@ -277,7 +277,7 @@ class Movie:
 
 	def frame_time(self, i, true_time = False):
 		if self.camera_name == 'IIDC':
-			time_delta = datetime.timedelta(0,0, self.read_header(i)['timestamp']) - datetime.timedelta(0,0, self.read_header(0)['timestamp'])
+			time_delta = datetime.timedelta(0,0, self.get_frame_header(i)['timestamp']) - datetime.timedelta(0,0, self.get_frame_header(0)['timestamp'])
 			total_seconds = time_delta.total_seconds()
 			if true_time:
 				return total_seconds
@@ -286,8 +286,8 @@ class Movie:
 			seconds = total_seconds % 60
 			string = "Time = {:02d}:{:02d}:{:05.2f}".format(hours, minutes, seconds)
 		elif self.camera_name == 'Ximea' or self.camera_name == 'Andor':
-			seconds_elapsed = self.read_header(i)['timestamp_sec'] - self.read_header(0)['timestamp_sec']
-			nanoseconds_elapsed = self.read_header(i)['timestamp_nsec'] - self.read_header(0)['timestamp_nsec']
+			seconds_elapsed = self.get_frame_header(i)['timestamp_sec'] - self.get_frame_header(0)['timestamp_sec']
+			nanoseconds_elapsed = self.get_frame_header(i)['timestamp_nsec'] - self.get_frame_header(0)['timestamp_nsec']
 			total_seconds= seconds_elapsed + nanoseconds_elapsed*(1E-9)
 			if true_time:
 				return total_seconds
