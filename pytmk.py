@@ -8,7 +8,7 @@ class Movie:
 		self.filename = filename
 		self.file = open(filename, 'r')
 
-		self.read_movie_header()
+		self._read_movie_header()
 
 		self.gap_between_frames = self.length_header + self.length_data #The periodicity of the data is length of data plus length of header
 		self.data_start_index = self.length_header + self.movie_header_index  #fileHeader plus frameHeader... A little dumb
@@ -17,10 +17,31 @@ class Movie:
 
 		self.max_pixel_depth = 2**16 - 1
 
-		self.n_frames = self.binary_n_frames()
+		def binary_n_frames():
+			"""Finds number of frames using binary search"""
+			def is_frame(i):
+				self.file.seek(self.gap_between_frames*i)
+				return len(self.file.read(self.gap_between_frames)) == self.gap_between_frames
+			def is_last_frame(i):
+				return is_frame(i) and not is_frame(i+1)
 
-	def read_movie_header(self):
+			l = 0
+			r = 3000000
+			mid = (r + l)/2
 
+			while not is_last_frame(mid):
+				if is_frame(mid):
+					l = mid
+				if not is_frame(mid):
+					r = mid
+
+				mid = (r+l)/2
+
+			return mid + 1
+
+		self.n_frames = binary_n_frames()
+
+	def _read_movie_header(self):
 		magic_word = 'TemI'
 
 		def read(s):
@@ -164,28 +185,6 @@ class Movie:
 			self.hdr_kneepoint2 = read('I')	
 		else:
 			raise Exception('Invalid camera type: Must be 1 for IIDC, 2 for Andor, and 3 for Ximea')
-
-	def binary_n_frames(self):
-		"""Finds number of frames using binary search"""
-		def is_frame(i):
-			self.file.seek(self.gap_between_frames*i)
-			return len(self.file.read(self.gap_between_frames)) == self.gap_between_frames
-		def is_last_frame(i):
-			return is_frame(i) and not is_frame(i+1)
-
-		l = 0
-		r = 3000000
-		mid = (r + l)/2
-
-		while not is_last_frame(mid):
-			if is_frame(mid):
-				l = mid
-			if not is_frame(mid):
-				r = mid
-
-			mid = (r+l)/2
-
-		return mid + 1
 
 	def local_folder(self):
 		"""Return the name of the folder to save things in, and creates it if it does not exist"""
