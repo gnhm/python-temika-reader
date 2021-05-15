@@ -186,13 +186,6 @@ class Movie:
 		else:
 			raise Exception('Invalid camera type: Must be 1 for IIDC, 2 for Andor, and 3 for Ximea')
 
-	def local_folder(self):
-		"""Return the name of the folder to save things in, and creates it if it does not exist"""
-		name = os.path.splitext(self.filename)[0] + auxExt
-		if not os.path.isdir(name):
-			os.makedirs(name)
-		return name
-
 	def read_header(self, i):
 		if self.camera_name == 'IIDC':
 			#Time is in microseconds!
