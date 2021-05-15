@@ -20,13 +20,32 @@ class Movie:
 		self.n_frames = self.binary_n_frames()
 
 	def read_movie_header(self):
+
+		magic_word = 'TemI'
+
 		def read(s):
 			return struct.unpack(s, self.file.read(struct.calcsize(s)))[0]
+
+		def find_magic():
+			while True:
+				buf = self.file.read(1)
+				#Check if file has reached its end. If so, raise exception
+				if not buf:
+					raise Exception('Magic word not found!')
+				else:
+					if buf == magic_word[0]: #If read first letter of the magic_word...
+						if self.file.read(len(magic_word) - 1) == magic_word[1:]: #Read the rest of the length of the word.
+							movie_header_index = self.file.tell() - len(magic_word)
+							self.file.seek(0)
+							return movie_header_index 
+						else:
+							self.file.seek(-len(magic_word) + 1, 1)
 	
-		magic_word = 'TemI'
 		self.file.seek(0)
-		self.movie_header_index = (self.file.read(200)).find(magic_word) #Where the file starts.
-		self.file.seek(self.movie_header_index)
+
+		self.movie_header_index = find_magic()
+
+		self.header = self.file.read(self.movie_header_index)
 
 		self.magic = struct.unpack('4s', self.file.read(4))[0]
 		if self.magic != magic_word:
