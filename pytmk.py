@@ -70,7 +70,7 @@ class Movie:
 
 		self.movie_header_index = find_magic()
 
-		self.header = self.file.read(self.movie_header_index)
+		self.header = self.file.read(self.movie_header_index).decode("utf-8")
 
 		self.magic = struct.unpack('4s', self.file.read(4))[0].decode("utf-8")
 		if self.magic != magic_word:
