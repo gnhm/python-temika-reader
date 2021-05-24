@@ -6,7 +6,7 @@ import datetime
 class Movie:
 	def __init__(self, filename):
 		self.filename = filename
-		self.file = open(filename, 'r')
+		self.file = open(filename, 'rb')
 
 		self._read_movie_header()
 
@@ -50,17 +50,21 @@ class Movie:
 		def find_magic():
 			while True:
 				buf = self.file.read(1)
+				#print buf.decode("utf-8"))
 				#Check if file has reached its end. If so, raise exception
 				if not buf:
 					raise Exception('Magic word not found!')
 				else:
-					if buf == magic_word[0]: #If read first letter of the magic_word...
-						if self.file.read(len(magic_word) - 1) == magic_word[1:]: #Read the rest of the length of the word.
-							movie_header_index = self.file.tell() - len(magic_word)
-							self.file.seek(0)
-							return movie_header_index 
-						else:
-							self.file.seek(-len(magic_word) + 1, 1)
+					try:
+						if buf.decode("utf-8") == magic_word[0]: #If read first letter of the magic_word...
+							if self.file.read(len(magic_word) - 1).decode("utf-8") == magic_word[1:]: #Read the rest of the length of the word.
+								movie_header_index = self.file.tell() - len(magic_word)
+								self.file.seek(0)
+								return movie_header_index 
+							else:
+								self.file.seek(-len(magic_word) + 1, 1)
+					except UnicodeDecodeError:
+						raise Exception('Magic word not found before switchover from utf-8')
 	
 		self.file.seek(0)
 
@@ -68,7 +72,7 @@ class Movie:
 
 		self.header = self.file.read(self.movie_header_index)
 
-		self.magic = struct.unpack('4s', self.file.read(4))[0]
+		self.magic = struct.unpack('4s', self.file.read(4))[0].decode("utf-8")
 		if self.magic != magic_word:
 			raise Exception('Magic word not found!')
 		self.movie_version = struct.unpack('I', self.file.read(4))[0]
