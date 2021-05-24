@@ -232,9 +232,9 @@ class Movie:
 
 		#TODO This needs to take self.pixel_mode into account. This works for standard IIDC camera
 		if self.pixel_mode == 'MONO16BE':
-			return np.reshape( struct.unpack('>' + (self.length_data/2)*"H", self.file.read(self.length_data)), (self.size_y, self.size_x) ).astype('H')
+			return np.reshape( struct.unpack('>' + (self.length_data//2)*"H", self.file.read(self.length_data)), (self.size_y, self.size_x) ).astype('H')
 		if self.pixel_mode == 'MONO16LE':
-			return np.reshape( struct.unpack('<' + (self.length_data/2)*"H", self.file.read(self.length_data)), (self.size_y, self.size_x) ).astype('H')
+			return np.reshape( struct.unpack('<' + (self.length_data//2)*"H", self.file.read(self.length_data)), (self.size_y, self.size_x) ).astype('H')
 		if self.pixel_mode == 'MONO8':
 			return np.reshape( struct.unpack(self.length_data*"B", self.file.read(self.length_data)), (self.size_y, self.size_x)).astype("B")
 
@@ -285,8 +285,8 @@ class Movie:
 			total_seconds = time_delta.total_seconds()
 			if true_time:
 				return total_seconds
-			hours = int(total_seconds) / (60*60)
-			minutes = (int(total_seconds) % (60*60)) / (60)
+			hours = int(total_seconds) // (60*60)
+			minutes = (int(total_seconds) % (60*60)) // (60)
 			seconds = total_seconds % 60
 			string = "Time = {:02d}:{:02d}:{:05.2f}".format(hours, minutes, seconds)
 		elif self.camera_name == 'Ximea' or self.camera_name == 'Andor':
@@ -295,8 +295,8 @@ class Movie:
 			total_seconds= seconds_elapsed + nanoseconds_elapsed*(1E-9)
 			if true_time:
 				return total_seconds
-			hours = int(total_seconds) / (60*60)
-			minutes = (int(total_seconds) % (60*60)) / (60)
+			hours = int(total_seconds) // (60*60)
+			minutes = (int(total_seconds) % (60*60)) // (60)
 			seconds = total_seconds % 60
 			string = "Time = {:02d}:{:02d}:{:05.3f}".format(hours, minutes, seconds)
 			
