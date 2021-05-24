@@ -27,7 +27,7 @@ class Movie:
 
 			l = 0
 			r = 3000000
-			mid = (r + l)/2
+			mid = (r + l)//2
 
 			while not is_last_frame(mid):
 				if is_frame(mid):
@@ -35,7 +35,7 @@ class Movie:
 				if not is_frame(mid):
 					r = mid
 
-				mid = (r+l)/2
+				mid = (r+l)//2
 
 			return mid + 1
 
