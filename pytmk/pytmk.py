@@ -4,9 +4,12 @@ import numpy as np
 import datetime
 
 class Movie:
-    def __init__(self, filename):
-        self.filename = filename
-        self.file = open(filename, 'rb')
+    def __init__(self, fid, filesize=None):
+        r"""
+        :fid: File handler. For example open(my_file_name, 'rb'). Mode has to be read bytes (rb).
+        :filesize: int, size of the file in bytes. If passed, will help calculate n_frames in O(1) instead of binary search O(n log n)
+        """
+        self.file = fid
 
         self._read_movie_header()
 
@@ -39,7 +42,25 @@ class Movie:
 
             return mid + 1
 
-        self.n_frames = binary_n_frames()
+        if filesize is None:
+            self.n_frames = binary_n_frames()
+        else:
+            # Working under the assumption that self.gap_between_frames will be
+            # much larger than any comments + global movie header that precedes
+            # the data. If this is true, then filesize / gap = n_frames + delta
+            # where delta will be a very small positive real number. Rounding
+            # should give us the real number of frames as an integer:
+            self.n_frames = round(filesize / self.gap_between_frames)
+
+    @classmethod
+    def from_filename(cls, filename):
+        r"""
+        Initialize the class from a filename.
+
+        Example: Movie.from_filename(my_filename).
+        """
+        fid = open(filename, 'rb')
+        return cls(fid)
 
     def _read_movie_header(self):
         magic_word = 'TemI'
