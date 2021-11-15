@@ -193,7 +193,7 @@ class Movie:
 	def get_frame_header(self, i):
 		if self.camera_name == 'IIDC':
 			#Time is in microseconds!
-			struct_string = 6*"I" + "L" + 4*"I" + "L" + 10*"I" + "L" + 7*"II" + "IiI" 
+			struct_string = 6*"I" + "Q" + 4*"I" + "Q" + 10*"I" + "Q" + 7*"II" + "IiI" 
 			struct_labels = ['magic', 'movie_version', 'camera_type', 'pixel_mode_code', 'length_header', 'length_data', 'guid', 'vendor_id', 'model_id', 'video_mode', 'color_coding', 'timestamp', 'size_x_max', 'size_y_max', 'size_x', 'size_y', 'pos_x', 'pos_y', 'pix_num', 'stride', 'data_depth', 'image_bytes', 'total_bytes', 'brightness_mode', 'brightness', 'exposure_mode', 'exposure', 'gamma_mode', 'gamma', 'shutter_mode', 'shutter', 'gain_mode', 'gain', 'temperature_mode', 'temperature', 'trigger_delay_mode', 'trigger_delay', 'trigger_mode', 'avt_channel_balance_mode', 'avt_channel_balance']
 
 		elif self.camera_name == 'Ximea':
