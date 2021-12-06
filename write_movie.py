@@ -12,11 +12,10 @@ def write_frames_to_movie(new_file, frames):
 
 	first_frame = next(frames)
 	plt.imshow(first_frame)
-
-        new_size_y, new_size_x = first_frame.shape #Yes, the order is correct. y first, then x.
-        length_data = new_size_y*new_size_x*2
+	new_size_y, new_size_x = first_frame.shape #Yes, the order is correct. y first, then x.
+	length_data = new_size_y*new_size_x*2
         
-        frames_g = chain((xx for xx in [first_frame]), frames)
+	frames_g = chain((xx for xx in [first_frame]), frames)
 
 	with open(new_file, 'wb') as new_movie:
 		new_movie.seek(0)
