@@ -8,6 +8,12 @@ git clone git@github.com:gnhm/python-temika-reader.git
 ```
 or, if this is complicated for you, download it.
 
+If you want to add pytmk to your python environment, an easy way is to create a symbolic link to the repo
+```
+cd <path>/lib/python3.8/site-packages
+ln -s <another-path>/python-temika-reader/pytmk
+```
+
 Next, import the `Movie` class and create an instance of it
 ```
 from pytmk import Movie
